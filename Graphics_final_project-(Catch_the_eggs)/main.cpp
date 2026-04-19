@@ -29,6 +29,27 @@ const int   GAME_DURATION = 120;
 const float BASE_FALL_SPD = 2.8f;
 
 
+
+
+float basketX      = WIN_W / 2.0f;
+float basketW      = BASKET_W_DEF;
+float fallSpeed    = BASE_FALL_SPD;
+int   score        = 0;
+int   highScore    = 0;
+int   timeLeft     = GAME_DURATION;
+int   lastTimeSec  = 0;
+
+bool  shieldActive    = false;
+float shieldTimer     = 0;
+bool  doublePoints    = false;
+float doubleTimer     = 0;
+bool  wideActive      = false;
+float wideTimer       = 0;
+bool  slowActive      = false;
+float slowTimer       = 0;
+
+
+
 void reshape(int w, int h) {
     glViewport(0, 0, w, h);
     glMatrixMode(GL_PROJECTION);
@@ -171,6 +192,56 @@ void drawChicken(float cx, float cy, bool facingRight) {
     drawRect(cx - flip * 5 - 3,  cy - 18, 5, 10);
 }
 
+
+void drawBasket(float bx, float bw) {
+    float bx1 = bx - bw / 2, bx2 = bx + bw / 2;
+    float by1 = BASKET_Y, by2 = BASKET_Y + BASKET_H;
+
+    // Wicker body
+    setColor(0.6f, 0.4f, 0.15f);
+    drawRect(bx1, by1, bw, BASKET_H);
+
+    // Weave lines
+    setColor(0.5f, 0.32f, 0.1f);
+    glLineWidth(1.0f);
+    for (float lx = bx1 + 10; lx < bx2; lx += 10) {
+        glBegin(GL_LINES);
+        glVertex2f(lx, by1); glVertex2f(lx, by2);
+        glEnd();
+    }
+    for (float ly = by1 + 8; ly < by2; ly += 8) {
+        glBegin(GL_LINES);
+        glVertex2f(bx1, ly); glVertex2f(bx2, ly);
+        glEnd();
+    }
+
+    // Rim
+    setColor(0.45f, 0.28f, 0.08f);
+    drawRect(bx1 - 3, by2 - 5, bw + 6, 8);
+
+    // Handle (arc drawn as line strip)
+    setColor(0.5f, 0.32f, 0.1f);
+    glLineWidth(3.0f);
+    glBegin(GL_LINE_STRIP);
+    for (int i = 0; i <= 20; i++) {
+        float t2 = i / 20.0f;
+        float ax = bx1 + t2 * bw;
+        float ay = by2 + 5 + 20 * sinf(t2 * 3.14159f);
+        glVertex2f(ax, ay);
+    }
+    glEnd();
+    glLineWidth(1.0f);
+
+    // Shield glow
+    if (shieldActive) {
+        setColor(0.8f, 0.3f, 1.0f, 0.4f);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        drawEllipse(bx, by1 + BASKET_H / 2, bw / 2 + 10, BASKET_H / 2 + 15);
+        glDisable(GL_BLEND);
+    }
+}
+
 void display() {
     glClear(GL_COLOR_BUFFER_BIT);
     drawBackground();
@@ -181,6 +252,8 @@ void display() {
      // Draw test chickens
     drawChicken(200, STICK_Y[0] + 10, true);
     drawChicken(600, STICK_Y[1] + 10, false);
+
+    drawBasket(basketX, basketW);
     glutSwapBuffers();
 
 
