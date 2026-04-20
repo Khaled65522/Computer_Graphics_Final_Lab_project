@@ -94,10 +94,10 @@ void drawEllipse(float cx, float cy, float rx, float ry, int segs = 32) {
 void drawBackground() {
     // Sky gradient
     glBegin(GL_QUADS);
-    setColor(0.4f, 0.7f, 1.0f);
+    setColor(0.2f, 0.3f, 1.0f);
     glVertex2f(0, WIN_H);
     glVertex2f(WIN_W, WIN_H);
-    setColor(0.7f, 0.9f, 1.0f);
+    setColor(0.9f, 0.9f, .7f);
     glVertex2f(WIN_W, 120);
     glVertex2f(0, 120);
     glEnd();
@@ -111,7 +111,7 @@ void drawBackground() {
     drawRect(0, 0, WIN_W, 50);
 
     // Clouds
-    setColor(1, 1, 1);
+    setColor(.8, 1, 1);
     auto cloud = [](float cx, float cy) {
         drawEllipse(cx, cy, 40, 20);
         drawEllipse(cx + 30, cy + 5, 30, 18);
@@ -123,17 +123,17 @@ void drawBackground() {
     cloud(650, 460);
 
     // Sun
-    setColor(1.0f, 0.95f, 0.3f);
+    setColor(0.9f, 0.99f, 0.3f);
     drawCircle(WIN_W - 60, WIN_H - 60, 35);
 }
 
 void drawStick(float y) {
     // Stick body
-    setColor(0.6f, 0.4f, 0.1f);
-    drawRect(STICK_X1, y - 4, STICK_X2 - STICK_X1, 8);
+    setColor(0.3f, 0.5f, 0.2f);
+    drawRect(STICK_X1, y - 4, STICK_X2 - STICK_X1, 9);
 
     // Bamboo nodes
-    setColor(0.5f, 0.35f, 0.08f);
+    setColor(0.5f, 0.7f, 0.08f);
     for (float x = STICK_X1 + 80; x < STICK_X2; x += 80) {
         drawRect(x - 3, y - 7, 6, 14);
     }
