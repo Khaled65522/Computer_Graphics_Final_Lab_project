@@ -14,9 +14,16 @@
 const int WIN_W = 800;
 const int WIN_H = 600;
 
+enum GameState { MENU, PLAYING, PAUSED, GAME_OVER, HIGH_SCORE_PAGE, HELP_PAGE };
+GameState gameState = MENU;
+
+// linear interpolation
+float lerp(float a, float b, float t) { return a + t * (b - a); }
+
+
 // ─── Constants─────────
 const int   NUM_STICKS = 2;
-const float STICK_Y[2] = { 540.f, 500.f }; // y positions of sticks
+const float STICK_Y[2] = { 540.f, 500.f };
 const float STICK_X1 = 50.f;
 const float STICK_X2 = 750.f;
 const float BASKET_Y = 60.f;
