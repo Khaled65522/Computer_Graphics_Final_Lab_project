@@ -21,6 +21,7 @@ GameState gameState = MENU;
 float lerp(float a, float b, float t) { return a + t * (b - a); }
 
 
+
 // ─── Constants─────────
 const int   NUM_STICKS = 2;
 const float STICK_Y[2] = { 540.f, 500.f };
@@ -37,6 +38,30 @@ const float BASE_FALL_SPD = 2.8f;
 
 
 
+
+struct Chicken {
+    float x;
+    float dir;   // +1 or -1
+    float speed;
+};
+
+struct Particle {
+    float x, y, vx, vy;
+    float r, g, b;
+    float life;   // 0..1
+    bool  active;
+};
+
+struct Airflow {
+    float strength;  // horizontal push per frame
+    float timer;     // remaining frames
+    bool  active;
+};
+
+Chicken chickens[NUM_STICKS];
+//std::vector<FallingObject> objects;
+std::vector<Particle> particles;
+Airflow airflow = {0, 0, false};
 
 float basketX = WIN_W / 2.0f;
 float basketW = BASKET_W_DEF;
