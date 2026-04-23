@@ -14,17 +14,9 @@
 const int WIN_W = 800;
 const int WIN_H = 600;
 
-enum GameState { MENU, PLAYING, PAUSED, GAME_OVER, HIGH_SCORE_PAGE, HELP_PAGE };
-GameState gameState = MENU;
-
-// linear interpolation
-float lerp(float a, float b, float t) { return a + t * (b - a); }
-
-
-
 // ─── Constants─────────
 const int   NUM_STICKS = 2;
-const float STICK_Y[2] = { 540.f, 500.f };
+const float STICK_Y[2] = { 540.f, 500.f }; // y positions of sticks
 const float STICK_X1 = 50.f;
 const float STICK_X2 = 750.f;
 const float BASKET_Y = 60.f;
@@ -37,7 +29,16 @@ const int   GAME_DURATION = 120;
 const float BASE_FALL_SPD = 2.8f;
 
 
-
+enum EggType { EGG_NORMAL, EGG_GOLD, EGG_BLUE, EGG_POOP };
+int eggPoints(EggType t) {
+    switch(t) {
+        case EGG_NORMAL: return 1;
+        case EGG_GOLD:   return 10;
+        case EGG_BLUE:   return 5;
+        case EGG_POOP:   return -10;
+        default:         return 0;
+    }
+}
 
 struct Chicken {
     float x;
@@ -62,6 +63,8 @@ Chicken chickens[NUM_STICKS];
 //std::vector<FallingObject> objects;
 std::vector<Particle> particles;
 Airflow airflow = {0, 0, false};
+
+
 
 float basketX = WIN_W / 2.0f;
 float basketW = BASKET_W_DEF;
@@ -156,7 +159,7 @@ void drawBackground() {
 
     // Sun
     setColor(0.9f, 0.99f, 0.3f);
-    drawCircle(WIN_W - 50, WIN_H - 40, 35);
+    drawCircle(WIN_W - 60, WIN_H - 60, 35);
 }
 
 void drawStick(float y) {
@@ -176,11 +179,11 @@ void drawChicken(float cx, float cy, bool facingRight) {
     float flip = facingRight ? 1.0f : -1.0f;
 
     // Body
-    setColor(0.9f, 0.9f, 0.8f);
+    setColor(0.9f, 0.7f, 0.3f);
     drawEllipse(cx, cy, 22, 18);
 
     // Head
-    setColor(0.95f, 0.9f, 0.9f);
+    setColor(0.95f, 0.8f, 0.4f);
     drawCircle(cx + flip * 18, cy + 12, 12);
 
     // Eye
@@ -188,25 +191,25 @@ void drawChicken(float cx, float cy, bool facingRight) {
     drawCircle(cx + flip * 21, cy + 14, 2.5f);
 
     // Beak
-    setColor(.70f, 0.3f, 0.1f);
+    setColor(1.0f, 0.6f, 0.1f);
     glBegin(GL_TRIANGLES);
     glVertex2f(cx + flip * 28, cy + 12);
     glVertex2f(cx + flip * 34, cy + 14);
-    glVertex2f(cx + flip * 28, cy + 20);
+    glVertex2f(cx + flip * 28, cy + 10);
     glEnd();
 
     // Comb (red)
-    setColor(0.7f, 0.1f, 0.1f);
+    setColor(0.9f, 0.1f, 0.1f);
     drawCircle(cx + flip * 16, cy + 23, 5);
     drawCircle(cx + flip * 20, cy + 25, 4);
     drawCircle(cx + flip * 13, cy + 22, 4);
 
     // Wing
-    setColor(0.7f, 0.5f, 0.5f);
+    setColor(0.8f, 0.6f, 0.2f);
     drawEllipse(cx - flip * 5, cy + 2, 14, 10);
 
     // Tail feathers
-    setColor(0.9f, 0.9f, 0.9f);
+    setColor(0.7f, 0.5f, 0.15f);
     glBegin(GL_TRIANGLES);
     glVertex2f(cx - flip * 18, cy + 8);
     glVertex2f(cx - flip * 35, cy + 20);
