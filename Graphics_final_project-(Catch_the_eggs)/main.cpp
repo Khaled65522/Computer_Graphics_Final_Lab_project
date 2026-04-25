@@ -40,6 +40,18 @@ int eggPoints(EggType t) {
     }
 }
 
+enum PerkType { PERK_WIDE, PERK_SLOW, PERK_TIME, PERK_SHIELD, PERK_DOUBLE };
+
+struct FallingObject {
+    float x, y;
+    float vx, vy;  
+    EggType eggType;
+    bool   isPerk;
+    PerkType perkType;
+    bool   active;
+    int    stickIdx;
+};
+
 struct Chicken {
     float x;
     float dir;   // +1 or -1
