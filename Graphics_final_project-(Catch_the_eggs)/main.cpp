@@ -121,6 +121,27 @@ void spawnEgg(int stickIdx) {
     objects.push_back(o);
 }
 
+void spawnPerk() {
+    FallingObject o;
+    o.x  = randF(60, WIN_W - 60);
+    o.y  = WIN_H - 20.f;
+    o.vx = 0;
+    o.vy = -(BASE_FALL_SPD * 0.7f);
+    o.active  = true;
+    o.isPerk  = true;
+    o.stickIdx = 0;
+
+    float r = randF(0, 1.0f);
+    if      (r < 0.25f) o.perkType = PERK_WIDE;
+    else if (r < 0.50f) o.perkType = PERK_SLOW;
+    else if (r < 0.70f) o.perkType = PERK_TIME;
+    else if (r < 0.85f) o.perkType = PERK_SHIELD;
+    else                o.perkType = PERK_DOUBLE;
+
+    objects.push_back(o);
+}
+
+
 void reshape(int w, int h) {
     glViewport(0, 0, w, h);
     glMatrixMode(GL_PROJECTION);
