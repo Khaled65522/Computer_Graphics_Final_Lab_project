@@ -44,7 +44,7 @@ enum PerkType { PERK_WIDE, PERK_SLOW, PERK_TIME, PERK_SHIELD, PERK_DOUBLE };
 
 struct FallingObject {
     float x, y;
-    float vx, vy;  
+    float vx, vy;
     EggType eggType;
     bool   isPerk;
     PerkType perkType;
@@ -72,7 +72,7 @@ struct Airflow {
 };
 
 Chicken chickens[NUM_STICKS];
-//std::vector<FallingObject> objects;
+std::vector<FallingObject> objects;
 std::vector<Particle> particles;
 Airflow airflow = {0, 0, false};
 
@@ -95,7 +95,31 @@ float wideTimer = 0;
 bool  slowActive = false;
 float slowTimer = 0;
 
+int   menuSelected    = 0; // 0=Start,1=HighScore,2=Help,3=Exit
+int   pauseSelected   = 0;
 
+float randF(float lo, float hi) {
+    return lo + (hi - lo) * (rand() / (float)RAND_MAX);
+}
+
+void spawnEgg(int stickIdx) {
+    FallingObject o;
+    o.stickIdx = stickIdx;
+    o.x  = chickens[stickIdx].x;
+    o.y  = STICK_Y[stickIdx] - 10.f;
+    o.vx = 0;
+    o.vy = -(fallSpeed + randF(0, 1.0f));
+    o.active  = true;
+    o.isPerk  = false;
+
+    float r = randF(0, 1.0f);
+    if      (r < 0.05f) o.eggType = EGG_GOLD;
+    else if (r < 0.20f) o.eggType = EGG_BLUE;
+    else if (r < 0.30f) o.eggType = EGG_POOP;
+    else                o.eggType = EGG_NORMAL;
+
+    objects.push_back(o);
+}
 
 void reshape(int w, int h) {
     glViewport(0, 0, w, h);
