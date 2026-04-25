@@ -243,7 +243,6 @@ void drawStick(float y) {
 
 
 void drawEgg(float cx, float cy, EggType t) {
-    // Egg shape (ellipse, slightly pointed top)
     switch(t) {
         case EGG_GOLD:
             setColor(1.0f, 0.85f, 0.1f);
@@ -340,7 +339,40 @@ void drawChicken(float cx, float cy, bool facingRight) {
     drawRect(cx - flip * 5 - 3, cy - 18, 5, 10);
 }
 
+void drawPerk(float cx, float cy, PerkType t) {
+    float hw = PERK_W / 2, hh = PERK_H / 2;
 
+    // Block background
+    switch(t) {
+        case PERK_WIDE:   setColor(0.2f, 0.9f, 0.4f); break;
+        case PERK_SLOW:   setColor(0.2f, 0.7f, 1.0f); break;
+        case PERK_TIME:   setColor(1.0f, 0.8f, 0.1f); break;
+        case PERK_SHIELD: setColor(0.8f, 0.3f, 1.0f); break;
+        case PERK_DOUBLE: setColor(1.0f, 0.4f, 0.4f); break;
+    }
+    drawRect(cx - hw, cy - hh, PERK_W, PERK_H);
+
+    // Border
+    setColor(1, 1, 1);
+    glLineWidth(2.0f);
+    glBegin(GL_LINE_LOOP);
+    glVertex2f(cx - hw, cy - hh); glVertex2f(cx + hw, cy - hh);
+    glVertex2f(cx + hw, cy + hh); glVertex2f(cx - hw, cy + hh);
+    glEnd();
+    glLineWidth(1.0f);
+
+    // Icon letter
+    setColor(1, 1, 1);
+    std::string lbl;
+    switch(t) {
+        case PERK_WIDE:   lbl = "W"; break;
+        case PERK_SLOW:   lbl = "S"; break;
+        case PERK_TIME:   lbl = "+T"; break;
+        case PERK_SHIELD: lbl = "SH"; break;
+        case PERK_DOUBLE: lbl = "2x"; break;
+    }
+    drawText(cx - 7, cy - 5, lbl, GLUT_BITMAP_HELVETICA_12);
+}
 void drawBasket(float bx, float bw) {
     float bx1 = bx - bw / 2, bx2 = bx + bw / 2;
     float by1 = BASKET_Y, by2 = BASKET_Y + BASKET_H;
