@@ -557,6 +557,40 @@ void drawPopups() {
     }
 }
 
+void drawMainMenu() {
+    // Background sky
+    glClearColor(0.3f, 0.6f, 0.95f, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    drawBackground();
+
+    // Title panel
+    drawPanel(WIN_W/2 - 220, WIN_H/2 - 180, 440, 360);
+
+    // Title text
+    setColor(1.0f, 0.85f, 0.1f);
+    drawTextLarge(WIN_W/2 - 110, WIN_H/2 + 155, "CATCH THE EGGS");
+
+    // Decorative egg icons
+    drawEgg(WIN_W/2 - 90, WIN_H/2 + 145, EGG_GOLD);
+    drawEgg(WIN_W/2 + 70, WIN_H/2 + 145, EGG_BLUE);
+
+    // Subtitle
+    setColor(0.8f, 0.9f, 1.0f);
+    drawText(WIN_W/2 - 120, WIN_H/2 + 120, "Use Arrow Keys or Mouse", GLUT_BITMAP_HELVETICA_18);
+
+    // Buttons
+    float bx = WIN_W/2 - 130, bw = 260, bh = 38, gap = 50;
+    float by = WIN_H/2 + 65;
+    drawMenuButton(bx, by,          bw, bh, "START GAME",  menuSelected == 0);
+    drawMenuButton(bx, by - gap,    bw, bh, "HIGH SCORE",  menuSelected == 1);
+    drawMenuButton(bx, by - gap*2,  bw, bh, "HELP",        menuSelected == 2);
+    drawMenuButton(bx, by - gap*3,  bw, bh, "EXIT",        menuSelected == 3);
+
+    // Instructions hint
+    setColor(0.6f, 0.8f, 1.0f);
+    drawText(WIN_W/2 - 90, WIN_H/2 - 125, "Press ENTER to select", GLUT_BITMAP_HELVETICA_12);
+}
+
 void display() {
     glClear(GL_COLOR_BUFFER_BIT);
     drawBackground();
