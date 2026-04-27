@@ -531,6 +531,12 @@ void drawMenuButton(float x, float y, float w, float h, const std::string& label
     float tx = x + w / 2 - label.size() * 7;
     drawTextLarge(tx, y + h / 2 - 8, label);
 }
+struct ScorePopup {
+    float x, y, life;
+    int   val;
+    bool  active;
+};
+std::vector<ScorePopup> popups;
 
 void display() {
     glClear(GL_COLOR_BUFFER_BIT);
