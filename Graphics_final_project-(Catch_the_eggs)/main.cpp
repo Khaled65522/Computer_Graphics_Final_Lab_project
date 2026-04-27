@@ -538,6 +538,25 @@ struct ScorePopup {
 };
 std::vector<ScorePopup> popups;
 
+void spawnPopup(float x, float y, int val) {
+    ScorePopup p; p.x = x; p.y = y; p.life = 1.0f; p.val = val; p.active = true;
+    popups.push_back(p);
+}
+
+void drawPopups() {
+    for (auto& p : popups) {
+        if (!p.active) continue;
+        float alpha = p.life;
+        if (p.val > 0) setColor(0.2f, 1.0f, 0.2f, alpha);
+        else           setColor(1.0f, 0.2f, 0.2f, alpha);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        std::string s = (p.val > 0 ? "+" : "") + std::to_string(p.val);
+        drawTextLarge(p.x, p.y, s);
+        glDisable(GL_BLEND);
+    }
+}
+
 void display() {
     glClear(GL_COLOR_BUFFER_BIT);
     drawBackground();
