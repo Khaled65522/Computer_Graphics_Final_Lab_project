@@ -435,6 +435,27 @@ void drawHUD() {
     }
 }
 
+void drawPanel(float x, float y, float w, float h) {
+    // Shadow
+    setColor(0, 0, 0, 0.5f);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    drawRect(x + 5, y - 5, w, h);
+
+    // Panel
+    setColor(0.12f, 0.12f, 0.22f, 0.92f);
+    drawRect(x, y, w, h);
+    glDisable(GL_BLEND);
+
+    // Border
+    setColor(0.5f, 0.7f, 1.0f);
+    glLineWidth(2.0f);
+    glBegin(GL_LINE_LOOP);
+    glVertex2f(x, y); glVertex2f(x + w, y);
+    glVertex2f(x + w, y + h); glVertex2f(x, y + h);
+    glEnd();
+    glLineWidth(1.0f);
+}
 void drawBasket(float bx, float bw) {
     float bx1 = bx - bw / 2, bx2 = bx + bw / 2;
     float by1 = BASKET_Y, by2 = BASKET_Y + BASKET_H;
