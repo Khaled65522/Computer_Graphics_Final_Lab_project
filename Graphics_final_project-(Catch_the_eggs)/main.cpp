@@ -568,6 +568,11 @@ void display() {
     drawChicken(200, STICK_Y[0] + 10, true);
     drawChicken(600, STICK_Y[1] + 10, false);
 
+   //  drawParticles();
+    drawPopups();
+
+    
+    drawHUD();
     drawBasket(basketX, basketW);
     glutSwapBuffers();
 
