@@ -348,7 +348,7 @@ void drawChicken(float cx, float cy, bool facingRight) {
     glVertex2f(cx - flip * 28, cy - 8);
     glEnd();
 
-   
+
     setColor(1.0f, 0.6f, 0.1f);
     drawRect(cx + flip * 5 - 3, cy - 18, 5, 10);
     drawRect(cx - flip * 5 - 3, cy - 18, 5, 10);
@@ -605,7 +605,7 @@ void display() {
    //  drawParticles();
     drawPopups();
 
-    
+
     drawHUD();
     drawBasket(basketX, basketW);
     glutSwapBuffers();
