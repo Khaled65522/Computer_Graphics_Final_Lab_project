@@ -728,6 +728,22 @@ void drawGameOver() {
 
 void display() {
     glClear(GL_COLOR_BUFFER_BIT);
+
+    if (gameState == MENU) {
+        drawMainMenu();
+        glutSwapBuffers();
+        return;
+    }
+    if (gameState == HIGH_SCORE_PAGE) {
+        drawHighScorePage();
+        glutSwapBuffers();
+        return;
+    }
+    if (gameState == HELP_PAGE) {
+        drawHelpPage();
+        glutSwapBuffers();
+        return;
+    }
     drawBackground();
 
     for (int i = 0; i < NUM_STICKS; i++) {
@@ -737,12 +753,20 @@ void display() {
     drawChicken(200, STICK_Y[0] + 10, true);
     drawChicken(600, STICK_Y[1] + 10, false);
 
+    for (auto& o : objects) {
+        if (!o.active) continue;
+        if (o.isPerk) drawPerk(o.x, o.y, o.perkType);
+        else          drawEgg(o.x,  o.y, o.eggType);
+    }
    //  drawParticles();
     drawPopups();
-
+   //drawParticles();
 
     drawHUD();
     drawBasket(basketX, basketW);
+
+    if (gameState == PAUSED)   drawPauseScreen();
+    if (gameState == GAME_OVER) drawGameOver();
     glutSwapBuffers();
 
 
