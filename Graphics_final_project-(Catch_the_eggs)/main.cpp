@@ -772,6 +772,137 @@ bool hitsBasket(const FallingObject& o) {
     return (o.x > bx1 - EGG_R && o.x < bx2 + EGG_R &&
             o.y > by1 - EGG_R && o.y < by2 + EGG_R);
 }
+
+int frameCount   = 0;
+int spawnCounter = 0;
+int perkCounter  = 0;
+int windCounter  = 0;
+
+void timerCallback(int) {
+    if (gameState != PLAYING) {
+        glutTimerFunc(16, timerCallback, 0);
+        return;
+    }
+
+    frameCount++;
+
+    // Wall clock countdown (approx 60 fps)
+    if (frameCount % 60 == 0) {
+        timeLeft--;
+        if (timeLeft <= 0) {
+            timeLeft = 0;
+            if (score > highScore) highScore = score;
+            gameState = GAME_OVER;
+        }
+    }
+
+    // Move chickens
+    for (int i = 0; i < NUM_STICKS; i++) {
+        chickens[i].x += chickens[i].dir * chickens[i].speed;
+        if (chickens[i].x > STICK_X2 - 30) { chickens[i].x = STICK_X2 - 30; chickens[i].dir = -1; }
+        if (chickens[i].x < STICK_X1 + 30) { chickens[i].x = STICK_X1 + 30; chickens[i].dir =  1; }
+    }
+
+    // Spawn eggs (each stick)
+    spawnCounter++;
+    int spawnInterval = slowActive ? 100 : 55;
+    if (spawnCounter >= spawnInterval) {
+        for (int i = 0; i < NUM_STICKS; i++) spawnEgg(i);
+        spawnCounter = 0;
+    }
+
+    // Spawn perks
+    perkCounter++;
+    if (perkCounter >= 420) {
+        spawnPerk();
+        perkCounter = 0;
+    }
+
+    // Airflow (BONUS)
+    windCounter++;
+    if (windCounter >= 600) {
+        airflow.strength = randF(-1.5f, 1.5f);
+        airflow.timer    = (int)randF(120, 250);
+        airflow.active   = true;
+        windCounter      = 0;
+    }
+    if (airflow.active) {
+        airflow.timer--;
+        if (airflow.timer <= 0) airflow.active = false;
+    }
+
+    // Move objects
+    for (auto& o : objects) {
+        if (!o.active) continue;
+        o.vy -= 0.04f; // slight acceleration
+        if (airflow.active) o.vx += airflow.strength * 0.04f;
+        o.x += o.vx;
+        o.y += o.vy;
+
+        // Bounce off walls (drift)
+        if (o.x < 0) { o.x = 0; o.vx = fabsf(o.vx) * 0.5f; }
+        if (o.x > WIN_W) { o.x = WIN_W; o.vx = -fabsf(o.vx) * 0.5f; }
+
+        // Hit basket
+        if (hitsBasket(o)) {
+            o.active = false;
+            if (o.isPerk) {
+                applyPerk(o.perkType);
+            } else {
+                int pts = eggPoints(o.eggType);
+                if (o.eggType == EGG_POOP && shieldActive) pts = 0;
+                if (doublePoints && pts > 0) pts *= 2;
+                score += pts;
+                if (score < 0) score = 0;
+                spawnPopup(o.x, BASKET_Y + BASKET_H + 10, pts);
+                // Particles
+                float r = 1, g = 1, b = 0.5f;
+                if (o.eggType == EGG_GOLD)  { r=1;    g=0.85f; b=0.1f; }
+                if (o.eggType == EGG_BLUE)  { r=0.2f; g=0.5f;  b=1;    }
+                if (o.eggType == EGG_POOP)  { r=0.6f; g=0.4f;  b=0.1f; }
+                spawnParticles(o.x, BASKET_Y + BASKET_H, r, g, b);
+            }
+        }
+
+        // Off screen
+        if (o.y < -30) o.active = false;
+    }
+
+    // Cleanup inactive objects
+    objects.erase(std::remove_if(objects.begin(), objects.end(),
+        [](const FallingObject& o){ return !o.active; }), objects.end());
+
+    // Perk timers
+    if (wideActive)   { wideTimer--;   if (wideTimer <= 0)   { wideActive   = false; basketW    = BASKET_W_DEF; } }
+    if (slowActive)   { slowTimer--;   if (slowTimer <= 0)   { slowActive   = false; fallSpeed  = BASE_FALL_SPD; } }
+    if (shieldActive) { shieldTimer--; if (shieldTimer <= 0) { shieldActive = false; } }
+    if (doublePoints) { doubleTimer--; if (doubleTimer <= 0) { doublePoints = false; } }
+
+    // Update particles
+    for (auto& p : particles) {
+        if (!p.active) continue;
+        p.x += p.vx; p.y += p.vy;
+        p.vy -= 0.1f;
+        p.life -= 0.025f;
+        if (p.life <= 0) p.active = false;
+    }
+    particles.erase(std::remove_if(particles.begin(), particles.end(),
+        [](const Particle& p){ return !p.active; }), particles.end());
+
+    // Update popups
+    for (auto& p : popups) {
+        if (!p.active) continue;
+        p.y += 0.8f;
+        p.life -= 0.02f;
+        if (p.life <= 0) p.active = false;
+    }
+    popups.erase(std::remove_if(popups.begin(), popups.end(),
+        [](const ScorePopup& p){ return !p.active; }), popups.end());
+
+    glutPostRedisplay();
+    glutTimerFunc(16, timerCallback, 0);
+}
+
 void display() {
     glClear(GL_COLOR_BUFFER_BIT);
 
