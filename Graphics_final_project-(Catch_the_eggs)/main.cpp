@@ -16,6 +16,7 @@ const int WIN_H = 600;
 
 enum GameState { MENU, PLAYING, PAUSED, GAME_OVER, HIGH_SCORE_PAGE, HELP_PAGE };
 GameState gameState = MENU;
+float lerp(float a, float b, float t) { return a + t * (b - a); }
 
 // ─── Constants─────────
 const int   NUM_STICKS = 2;
