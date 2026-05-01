@@ -927,9 +927,8 @@ void display() {
     for (int i = 0; i < NUM_STICKS; i++) {
         drawStick(STICK_Y[i]);
     }
-    // Draw test chickens
-    drawChicken(200, STICK_Y[0] + 10, true);
-    drawChicken(600, STICK_Y[1] + 10, false);
+    for (int i = 0; i < NUM_STICKS; i++)
+     drawChicken(chickens[i].x, STICK_Y[i] + 10, chickens[i].dir > 0);
 
     for (auto& o : objects) {
         if (!o.active) continue;
